@@ -1,7 +1,5 @@
 {
   "blacklist": [
-    "explorer.exe",
-    "notepad.exe",
-    "chrome.exe"
+    "explorer.exe"
   ]
 }
