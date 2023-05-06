@@ -1,5 +1,7 @@
-use inputbot::{KeySequence, KeybdKey::*, MouseButton::*};
-use std::{thread::sleep, time::Duration};
+use inputbot::{KeybdKey::*};
+
+use std::cell::RefCell;
+use std::sync::Mutex;
 
 use std::os::windows::ffi::OsStringExt;
 use std::ffi::OsString;
@@ -28,18 +30,24 @@ fn get_foreground_exe_name() -> Option<String> {
 }
 
 
-
 fn main() {
-    
-    // Bind the number 1 key your keyboard to a function that types 
-    // "Hello, world!" when pressed.
-    Numrow1Key.bind(|| {
-        // call the function to get the name of the exe
-        let exe_name = get_foreground_exe_name().unwrap();
-        println!("exe_name: {}", exe_name);
+    let code_executed = Mutex::new(RefCell::new(false));
+
+    ScrollLockKey.bind(move || {
+        while ScrollLockKey.is_pressed() {
+            if F12Key.is_pressed() && !*code_executed.lock().unwrap().borrow() {
+                let exe_name = get_foreground_exe_name().unwrap();
+                println!("exe_name: {}", exe_name);
+                *code_executed.lock().unwrap().borrow_mut() = true;
+            } else if F12Key.is_pressed() && *code_executed.lock().unwrap().borrow() {
+                // F12 has already been pressed and code has already been executed,
+                // so exit the loop early to avoid printing the message multiple times.
+                break;
+            }
+        }
+        *code_executed.lock().unwrap().borrow_mut() = false; // Reset the flag when Scroll Lock is released
     });
-
-    // Call this to start listening for bound inputs.
+    
     inputbot::handle_input_events();
-}   
-
+    
+}

@@ -6,5 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-inputbot = "0.5"
 winapi = { version = "0.3", features = ["winuser", "processthreadsapi", "psapi"] }
+inputbot = "0.5.1"
