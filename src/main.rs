@@ -3,6 +3,12 @@ use inputbot::{KeybdKey::*};
 use std::cell::RefCell;
 use std::sync::Mutex;
 
+use std::process::Command;
+
+use std::fs::File;
+use std::io::BufReader;
+use serde::{Deserialize, Serialize};
+
 use std::os::windows::ffi::OsStringExt;
 use std::ffi::OsString;
 use std::path::Path;
@@ -29,15 +35,41 @@ fn get_foreground_exe_name() -> Option<String> {
     Some(exe_path.file_name()?.to_string_lossy().into_owned())
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+struct Config {
+    blacklist: Vec<String>,
+}
 
 fn main() {
+    
+    let file_name = "blacklist.json";
+    let file = match File::open(&file_name) {
+        Ok(f) => f,
+        Err(e) => {
+            eprintln!("Failed to open file {}: {}", file_name, e);
+            return;
+        }
+    };
+
+    let reader = BufReader::new(file);
+
+    let config_file = File::open("blacklist.json").unwrap();
+    let _reader  = BufReader::new(config_file);
+    let config: Config = serde_json::from_reader(reader).unwrap();
+
     let code_executed = Mutex::new(RefCell::new(false));
 
     ScrollLockKey.bind(move || {
+        // This code will be executed when Scroll Lock is pressed <held down>
         while ScrollLockKey.is_pressed() {
             if F12Key.is_pressed() && !*code_executed.lock().unwrap().borrow() {
                 let exe_name = get_foreground_exe_name().unwrap();
-                println!("exe_name: {}", exe_name);
+                if config.blacklist.contains(&exe_name.to_string()) {
+                    println!("blacklist: {}", exe_name);
+                }
+                else{
+                    println!("exe_name: {}", exe_name);
+                }
                 *code_executed.lock().unwrap().borrow_mut() = true;
             } else if F12Key.is_pressed() && *code_executed.lock().unwrap().borrow() {
                 // F12 has already been pressed and code has already been executed,
