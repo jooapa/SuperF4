@@ -1,3 +1,4 @@
+
 use inputbot::{KeybdKey::*};
 
 use std::cell::RefCell;
@@ -41,7 +42,7 @@ struct Config {
 }
 
 fn main() {
-    
+
     let file_name = "blacklist.json";
     let file = match File::open(&file_name) {
         Ok(f) => f,
@@ -64,11 +65,21 @@ fn main() {
         while ScrollLockKey.is_pressed() {
             if F12Key.is_pressed() && !*code_executed.lock().unwrap().borrow() {
                 let exe_name = get_foreground_exe_name().unwrap();
+                //taskkill program, if not in blacklist
                 if config.blacklist.contains(&exe_name.to_string()) {
                     println!("blacklist: {}", exe_name);
                 }
                 else{
                     println!("exe_name: {}", exe_name);
+                    let output = Command::new("taskkill")
+                        .args(&["/F", "/IM", &exe_name])
+                        .output()
+                        .expect("failed to execute process");
+                    if output.status.success() {
+                        println!("Program terminated successfully!");
+                    } else {
+                        println!("Failed to terminate program!");
+                    }
                 }
                 *code_executed.lock().unwrap().borrow_mut() = true;
             } else if F12Key.is_pressed() && *code_executed.lock().unwrap().borrow() {
