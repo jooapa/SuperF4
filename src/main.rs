@@ -1,3 +1,4 @@
+#![windows_subsystem = "windows"]
 
 use inputbot::{KeybdKey::*};
 
@@ -42,6 +43,19 @@ struct Config {
 }
 
 fn main() {
+    
+    use std::ptr;
+    use winapi::um::wincon::GetConsoleWindow;
+    use winapi::um::winuser::{ShowWindow, SW_HIDE};
+    unsafe { winapi::um::wincon::FreeConsole() };
+
+    let window = unsafe {GetConsoleWindow()};
+    // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showwindow
+    if window != ptr::null_mut() {
+        unsafe {
+            ShowWindow(window, SW_HIDE);
+        }
+    }
 
     let file_name = "blacklist.json";
     let file = match File::open(&file_name) {
