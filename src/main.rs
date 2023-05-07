@@ -74,9 +74,9 @@ fn main() {
 
     let code_executed = Mutex::new(RefCell::new(false));
 
-    RCtrlKey.bind(move || {
+    RControlKey .bind(move || {
         // This code will be executed when Scroll Lock is pressed <held down>
-        while RCtrlKey.is_pressed() {
+        while RControlKey .is_pressed() {
             if F11Key.is_pressed() && !*code_executed.lock().unwrap().borrow() {
                 let exe_name = get_foreground_exe_name().unwrap();
                 //taskkill program, if not in blacklist
