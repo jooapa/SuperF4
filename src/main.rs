@@ -1,5 +1,5 @@
 #![windows_subsystem = "windows"]
-
+//detect keypresses
 use inputbot::{KeybdKey::*};
 
 use std::cell::RefCell;
@@ -10,7 +10,7 @@ use std::process::Command;
 use std::fs::File;
 use std::io::BufReader;
 use serde::{Deserialize, Serialize};
-
+//get exe
 use std::os::windows::ffi::OsStringExt;
 use std::ffi::OsString;
 use std::path::Path;
@@ -24,14 +24,14 @@ fn get_foreground_exe_name() -> Option<String> {
     let mut pid = 0 as DWORD;
     unsafe { GetWindowThreadProcessId(hwnd, &mut pid) };
     if pid == 0 { return None; }
-
+    
     let handle = unsafe { OpenProcess(0x0400 | 0x0010, 0, pid) };
     if handle.is_null() { return None; }
-
+    
     let mut buffer = [0u16; MAX_PATH];
     let len = unsafe { GetModuleFileNameExW(handle, 0 as _, buffer.as_mut_ptr(), MAX_PATH as _) };
     if len == 0 { return None; }
-
+    
     let exe_name = OsString::from_wide(&buffer[..len as usize]);
     let exe_path = Path::new(&exe_name);
     Some(exe_path.file_name()?.to_string_lossy().into_owned())
@@ -43,7 +43,7 @@ struct Config {
 }
 
 fn main() {
-    
+    //hide console
     use std::ptr;
     use winapi::um::wincon::GetConsoleWindow;
     use winapi::um::winuser::{ShowWindow, SW_HIDE};
