@@ -74,10 +74,10 @@ fn main() {
 
     let code_executed = Mutex::new(RefCell::new(false));
 
-    ScrollLockKey.bind(move || {
+    RCtrlKey.bind(move || {
         // This code will be executed when Scroll Lock is pressed <held down>
-        while ScrollLockKey.is_pressed() {
-            if F12Key.is_pressed() && !*code_executed.lock().unwrap().borrow() {
+        while RCtrlKey.is_pressed() {
+            if F11Key.is_pressed() && !*code_executed.lock().unwrap().borrow() {
                 let exe_name = get_foreground_exe_name().unwrap();
                 //taskkill program, if not in blacklist
                 if config.blacklist.contains(&exe_name.to_string()) {
@@ -96,8 +96,8 @@ fn main() {
                     }
                 }
                 *code_executed.lock().unwrap().borrow_mut() = true;
-            } else if F12Key.is_pressed() && *code_executed.lock().unwrap().borrow() {
-                // F12 has already been pressed and code has already been executed,
+            } else if F11Key.is_pressed() && *code_executed.lock().unwrap().borrow() {
+                // F11 has already been pressed and code has already been executed,
                 // so exit the loop early to avoid printing the message multiple times.
                 break;
             }
