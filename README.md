@@ -31,8 +31,6 @@ If you prefer to build SuperF4 from source, you'll need to have [Rust](https://w
 
 4.  Run SuperF4:
 
-arduinoCopy code
-
 `./target/release/superf4.exe` 
 
 By default, SuperF4 will listen for the Right Ctrl + F11 combination. If you want to use a different key combination, you can edit the `main.rs` file in the root directory of the repository. 
