@@ -57,10 +57,6 @@ fn main() {
         }
     }
 
-    let config = match getblacklistname() {
-        Some(value) => value,
-        None => return,
-    };
 
     let code_executed = Mutex::new(RefCell::new(false));
 
@@ -68,6 +64,11 @@ fn main() {
         // This code will be executed when Scroll Lock is pressed <held down>
         while RControlKey .is_pressed() {
             if F11Key.is_pressed() && !*code_executed.lock().unwrap().borrow() {
+                let config = match getblacklistname() {
+                    Some(value) => value,
+                    None => return,
+                };
+
                 let exe_name = get_foreground_exe_name().unwrap();
                 //taskkill program, if not in blacklist
                 if config.blacklist.contains(&exe_name.to_string()) {
@@ -94,6 +95,11 @@ fn main() {
             }
             //ignore blacklist.json file, when pressed F10
             if F10Key.is_pressed() && !*code_executed.lock().unwrap().borrow() {
+                let config = match getblacklistname() {
+                    Some(value) => value,
+                    None => return,
+                };
+                
                 let exe_name = get_foreground_exe_name().unwrap();
                 let output = Command::new("taskkill")
                     .args(&["/F", "/IM", &exe_name])
