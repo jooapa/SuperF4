@@ -83,21 +83,42 @@ fn main() {
                 if config.blacklist.contains(&exe_name.to_string()) {
                     println!("blacklist: {}", exe_name);
                 }
+
                 else{
                     println!("exe_name: {}", exe_name);
-                    let output = Command::new("taskkill")
-                        .args(&["/F", "/IM", &exe_name])
-                        .output()
-                        .expect("failed to execute process");
-                    if output.status.success() {
-                        println!("Program terminated successfully!");
-                    } else {
-                        println!("Failed to terminate program!");
-                    }
+                let output = Command::new("taskkill")
+                    .args(&["/F", "/IM", &exe_name])
+                    .output()
+                    .expect("failed to execute process");
+                if output.status.success() {
+                    println!("Program terminated successfully!");
+                } else {
+                    println!("Failed to terminate program!");
                 }
-                *code_executed.lock().unwrap().borrow_mut() = true;
+                
+            }
+            *code_executed.lock().unwrap().borrow_mut() = true;
             } else if F11Key.is_pressed() && *code_executed.lock().unwrap().borrow() {
                 // F11 has already been pressed and code has already been executed,
+                // so exit the loop early to avoid printing the message multiple times.
+                break;
+            }
+            //ignore blacklist.json file, when pressed F10
+            if F10Key.is_pressed() && !*code_executed.lock().unwrap().borrow() {
+                let exe_name = get_foreground_exe_name().unwrap();
+                let output = Command::new("taskkill")
+                    .args(&["/F", "/IM", &exe_name])
+                    .output()
+                    .expect("failed to execute process");
+                if output.status.success() {
+                    println!("Program terminated successfully!");
+                } else {
+                    println!("Failed to terminate program!");
+                }
+                *code_executed.lock().unwrap().borrow_mut() = true;
+            }
+            else if F10Key.is_pressed() && *code_executed.lock().unwrap().borrow() {
+                // F10 has already been pressed and code has already been executed,
                 // so exit the loop early to avoid printing the message multiple times.
                 break;
             }
