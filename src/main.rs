@@ -57,20 +57,10 @@ fn main() {
         }
     }
 
-    let file_name = "blacklist.json";
-    let file = match File::open(&file_name) {
-        Ok(f) => f,
-        Err(e) => {
-            eprintln!("Failed to open file {}: {}", file_name, e);
-            return;
-        }
+    let config = match getblacklistname() {
+        Some(value) => value,
+        None => return,
     };
-
-    let reader = BufReader::new(file);
-
-    let config_file = File::open("blacklist.json").unwrap();
-    let _reader  = BufReader::new(config_file);
-    let config: Config = serde_json::from_reader(reader).unwrap();
 
     let code_executed = Mutex::new(RefCell::new(false));
 
@@ -83,7 +73,6 @@ fn main() {
                 if config.blacklist.contains(&exe_name.to_string()) {
                     println!("blacklist: {}", exe_name);
                 }
-
                 else{
                     println!("exe_name: {}", exe_name);
                 let output = Command::new("taskkill")
@@ -128,4 +117,20 @@ fn main() {
     
     inputbot::handle_input_events();
     
+}
+
+fn getblacklistname() -> Option<Config> {
+    let file_name = "blacklist.json";
+    let file = match File::open(&file_name) {
+        Ok(f) => f,
+        Err(e) => {
+            eprintln!("Failed to open file {}: {}", file_name, e);
+            return None;
+        }
+    };
+    let reader = BufReader::new(file);
+    let config_file = File::open("blacklist.json").unwrap();
+    let _reader  = BufReader::new(config_file);
+    let config: Config = serde_json::from_reader(reader).unwrap();
+    Some(config)
 }
