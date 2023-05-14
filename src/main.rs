@@ -99,7 +99,7 @@ fn main() {
                     Some(value) => value,
                     None => return,
                 };
-                
+
                 let exe_name = get_foreground_exe_name().unwrap();
                 let output = Command::new("taskkill")
                     .args(&["/F", "/IM", &exe_name])
