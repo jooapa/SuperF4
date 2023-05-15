@@ -14,7 +14,7 @@ Pressing the **Right Ctrl + F10 combination** will terminate the active window, 
 
 ### Downloading the Setup
 
-The easiest way to use SuperF4 is to download the latest release from the [releases page](https://github.com/jooapa/SuperF4/releases/tag/release). Once you've downloaded the setup, simply run it and follow the instructions to install SuperF4.
+The easiest way to use SuperF4 is to download the latest release from the [releases page](https://github.com/jooapa/SuperF4/releases/tag/release). Once you've downloaded the exe and the .json file, simply run it.
 
 ### Building from Source
 
