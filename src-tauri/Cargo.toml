@@ -2,9 +2,9 @@
 name = "mechanized-maestro"
 version = "0.0.0"
 description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
+authors = ["Jooapa"]
+license = "Beerware"
+repository = "https://github.com/jooapa/SuperF4"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -16,6 +16,8 @@ tauri-build = { version = "1.4", features = [] }
 tauri = { version = "1.4", features = ["shell-open"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+
+inputbot = "0.5"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
