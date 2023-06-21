@@ -17,14 +17,8 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-document.querySelector("#startButton").addEventListener("click", () => { 
-  invoke("startStopClicker");
-  //stop start
-  if (document.querySelector("#startButton").textContent == "Start") {
-    document.querySelector("#startButton").textContent = "Stop";
-  }
-  else {
-    document.querySelector("#startButton").textContent = "Start";
-  }
+document.querySelector("#startClicker").addEventListener("click", () => {
+  console.log("startClicker");
+  invoke("startClicker");
 }
 );

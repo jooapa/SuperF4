@@ -10,22 +10,30 @@ use inputbot::{KeybdKey::*, MouseButton::*};
 
 #[tauri::command]
 fn cps(name: &str) -> String {
-    let formatted = format!("1 Click per {}ms", name);
-    println!("{}", name);
-    formatted // Return the formatted string
+    format!("1 Click per {}ms", name)
 }
 
 #[tauri::command]
-fn startStopClicker(cpms: i32) {
-    println!("Start Clicker: {}ms", cpms);
-    // Rest of your code...
+fn startClicker() {
+    CapsLockKey.bind(move || {
+        while CapsLockKey.is_toggled() {
+            LeftButton.press();
+            LeftButton.release();
+
+            sleep(Duration::from_millis(30));
+        }
+    });
+
+    // Call this to start listening for bound inputs.
+    inputbot::handle_input_events();
 }
 
+
+
 fn main() {
-    let mut cpms: i32 = 0;
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![cps])
-        .invoke_handler(tauri::generate_handler![startStopClicker])
+        .invoke_handler(tauri::generate_handler![startClicker])
         .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .expect("error while running tauri application");    
 }
