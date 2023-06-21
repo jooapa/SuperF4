@@ -17,8 +17,3 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-document.querySelector("#startClicker").addEventListener("click", () => {
-  console.log("startClicker");
-  invoke("startClicker");
-}
-);

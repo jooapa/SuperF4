@@ -21,36 +21,7 @@
   flex-direction: column;
   justify-content: center;
   text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-
-.row {
-  display: flex;
-  justify-content: center;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
-h1 {
-  text-align: center;
+  align-items: center
 }
 
 input,
@@ -72,20 +43,16 @@ button {
 }
 
 button:hover {
-  border-color: #396cd8;
+  border-color: #7639d8;
 }
 button:active {
-  border-color: #396cd8;
+  border-color: #9039d8;
   background-color: #e8e8e8;
 }
 
 input,
 button {
   outline: none;
-}
-
-#greet-input {
-  margin-right: 5px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -95,7 +62,7 @@ button {
   }
 
   a:hover {
-    color: #24c8db;
+    color: #9224db;
   }
 
   input,
@@ -106,4 +73,15 @@ button {
   button:active {
     background-color: #0f0f0f69;
   }
+}
+.blacklistDiv{
+  background-color: #444444;
+  width: 200px;
+  height: 100px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  color: white;
 }
