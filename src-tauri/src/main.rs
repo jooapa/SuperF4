@@ -3,6 +3,7 @@
 use std::env;
 use std::fs::File;
 use std::io::{Error, Read, Write};
+
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 
@@ -13,7 +14,7 @@ struct Blacklist {
 
 fn main() {
     tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![remove_exe_from_json, add_exe_to_json])
+    .invoke_handler(tauri::generate_handler![remove_exe_from_json, add_exe_to_json, get_blacklist_name])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");    
 }
@@ -100,4 +101,40 @@ fn remove_from_blacklist(entry: &str) -> Result<(), Error> {
     file.write_all(updated_contents.as_bytes())?;
 
     Ok(())
+}
+
+#[tauri::command]
+fn get_blacklist_name() -> Option<Blacklist> {
+    // Get the path of the current executable
+    let exe_path = match env::current_exe() {
+        Ok(path) => path,
+        Err(e) => {
+            eprintln!("Failed to get current executable path: {}", e);
+            return None;
+        }
+    };
+
+    // Create a path for the blacklist.json in the same directory as the executable
+    let mut blacklist_path = PathBuf::from(exe_path.parent().unwrap());
+    blacklist_path.push("blacklist.json");
+
+    let file = match std::fs::File::open(&blacklist_path) {
+        Ok(f) => f,
+        Err(e) => {
+            eprintln!("Failed to open file {}: {}", blacklist_path.display(), e);
+            return None;
+        }
+    };
+
+    let reader = std::io::BufReader::new(file);
+
+    let config: Blacklist = match serde_json::from_reader(reader) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("Failed to deserialize blacklist: {}", e);
+            return None;
+        }
+    };
+
+    Some(config)
 }
