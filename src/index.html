@@ -5,25 +5,20 @@
     <link rel="stylesheet" href="styles.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tauri App</title>
-    <!-- <script type="module" src="/main.js" defer></script> -->
-    <script src="main.js"></script>
-    <style>
-      .logo.vanilla:hover {
-        filter: drop-shadow(0 0 2em #ffe21c);
-      }
-    </style>
+    <script type="module" src="/main.js" defer></script>
   </head>
 
   <body>
     <div class="container">
 
       <h4 id="errorId"></h4>
-      <form class="row" id="greet-form">
+      <form class="row" id="add-form">
         <input id="ms-input" placeholder="Add .exe" />
         <button type="submit">Add</button>
       </form>
-      <p id="greet-msg"></p>
-      <div class="blacklistDiv">explorer.exe</div>
+
+      <div class="blacklistDiv" id="explorer.exe" onclick="removeExeDiv(this)">explorer.exe</div>
     </div>
+    <script src = "/main.js"></script>
   </body>
 </html>
