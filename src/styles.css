@@ -85,3 +85,10 @@ button {
   margin: 10px;
   color: white;
 }
+
+#errorId{
+  color: rgb(255, 60, 60);
+  font-size: 12px;
+  margin: 0;
+  padding: 0;
+}

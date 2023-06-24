@@ -17,3 +17,8 @@ fn main() {
 fn processF4() {
     println!("F4 pressed");
 }
+
+#[tauri::command(rename_all = "snake_case")]
+fn my_custom_command(invoke_message: String) {
+  println!("I was invoked from JS, with this message: {}", invoke_message);
+}
