@@ -41,6 +41,7 @@ function objToString(obj) {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
+  invoke("start_f4");
   exeName = document.querySelector("#ms-input");
   document.querySelector("#add-form").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -104,11 +105,5 @@ document.querySelector("#refresh").addEventListener("click", (e) => {
   setTimeout(function () {
     button.classList.remove("clicked");location.reload();
   }, 200); // Adjust the duration of the animation in milliseconds
-}
-);
-
-document.querySelector("#start").addEventListener("click", (e) => {
-  invoke("start_f4");
-  console.log("start");
 }
 );

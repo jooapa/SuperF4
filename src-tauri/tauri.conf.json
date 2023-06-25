@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "superf4",
-    "version": "0.0.1"
+    "version": "1.0.1"
   },
   "tauri": {
     "allowlist": {
@@ -44,7 +44,7 @@
         "title": "superf4",
         "width": 800,
         "height": 600,
-        "closable": false,
+        "closable": true,
         "minimizable": false,
         "maximizable": false,
         "skipTaskbar": true,
