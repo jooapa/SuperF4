@@ -25,7 +25,7 @@ fn add_exe_to_json(name: &str) {
     if let Err(err) = add_to_blacklist(name) {
         eprintln!("Error: {}", err);
     } else {
-        println!("Added 'lol.exe' to the blacklist.");
+        println!("Added {} to the blacklist.", name);
     }
 }
 
@@ -35,7 +35,7 @@ fn remove_exe_from_json(name: &str) {
     if let Err(err) = remove_from_blacklist(name) {
         eprintln!("Error: {}", err);
     } else {
-        println!("Removed 'lol.exe' from the blacklist.");
+        println!("Removed {} from the blacklist.", name);
     }
 }
 

@@ -73,7 +73,7 @@ function addExeDiv(paraexe) {
       divElement.onclick = function () {
         removeExeDiv(this);
       };
-      var containerElement = document.querySelector(".container");
+      var containerElement = document.querySelector("#blacklistcontainer");
       containerElement.appendChild(divElement);
 }
 
@@ -87,3 +87,6 @@ function removeExeDiv(element) {
   invoke("remove_exe_from_json", { name: divName });
 }
 
+document.querySelector("#refresh").addEventListener("click", (e) => {
+  location.reload();
+});
