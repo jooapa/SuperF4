@@ -18,6 +18,10 @@
         "open": true
       }
     },
+      "systemTray": {
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": true
+    },
     "bundle": {
       "active": true,
       "targets": "all",
@@ -39,7 +43,13 @@
         "resizable": true,
         "title": "superf4",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "closable": false,
+        "minimizable": false,
+        "maximizable": false,
+        "skipTaskbar": true,
+        "alwaysOnTop": true,
+        "decorations": true
       }
     ]
   }

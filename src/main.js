@@ -88,5 +88,21 @@ function removeExeDiv(element) {
 }
 
 document.querySelector("#refresh").addEventListener("click", (e) => {
-  location.reload();
+  
 });
+
+document.querySelector("#close").addEventListener("click", (e) => {
+  invoke("close_app");
+  console.log("close");
+}
+);
+
+
+document.querySelector("#refresh").addEventListener("click", (e) => {
+  var button = document.querySelector("#refresh");
+  button.classList.add("clicked");
+  setTimeout(function () {
+    button.classList.remove("clicked");location.reload();
+  }, 200); // Adjust the duration of the animation in milliseconds
+}
+);
