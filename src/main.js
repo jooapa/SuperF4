@@ -106,3 +106,9 @@ document.querySelector("#refresh").addEventListener("click", (e) => {
   }, 200); // Adjust the duration of the animation in milliseconds
 }
 );
+
+document.querySelector("#start").addEventListener("click", (e) => {
+  invoke("start_f4");
+  console.log("start");
+}
+);

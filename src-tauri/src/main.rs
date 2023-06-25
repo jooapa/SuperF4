@@ -7,7 +7,7 @@ use std::io::{Error, Read, Write};
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 
-use tauri::{CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayEvent, WindowBuilder};
+use tauri::{SystemTray, SystemTrayMenu, SystemTrayEvent};
 use tauri::Manager;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -19,7 +19,7 @@ fn main() {
     let tray_menu = SystemTrayMenu::new(); // insert the menu items here
 
     tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![remove_exe_from_json, add_exe_to_json, get_blacklist_name, close_app])
+    .invoke_handler(tauri::generate_handler![remove_exe_from_json, add_exe_to_json, get_blacklist_name, close_app, start_f4])
     .system_tray(SystemTray::new().with_menu(tray_menu))
     .on_system_tray_event(|app, event| match event {
     SystemTrayEvent::LeftClick {
@@ -185,4 +185,108 @@ fn get_blacklist_name() -> Option<Blacklist> {
 fn close_app(app: tauri::AppHandle) {
     let window = app.get_window("main").unwrap();
     window.hide().unwrap();
+}
+
+//-----------------------------------------------------
+
+use std::cell::RefCell;
+use std::sync::Mutex;
+use std::process::Command;
+use inputbot::{KeybdKey::*};
+use std::io::BufReader;
+
+//get exe
+use std::os::windows::ffi::OsStringExt;
+use std::ffi::OsString;
+use std::path::Path;
+use winapi::um::winuser::{GetForegroundWindow, GetWindowThreadProcessId};
+use winapi::um::processthreadsapi::OpenProcess;
+use winapi::um::psapi::GetModuleFileNameExW;
+use winapi::shared::minwindef::{DWORD, MAX_PATH};
+
+#[tauri::command]
+fn start_f4() {
+    let code_executed = Mutex::new(RefCell::new(false));
+
+    RControlKey .bind(move || {
+        // This code will be executed when Scroll Lock is pressed <held down>
+        while RControlKey .is_pressed() {
+            if F11Key.is_pressed() && !*code_executed.lock().unwrap().borrow() {
+                let config = match get_blacklist_name() {
+                    Some(value) => value,
+                    None => return,
+                };
+
+                let exe_name = get_foreground_exe_name().unwrap();
+                //taskkill program, if not in blacklist
+                if config.blacklist.contains(&exe_name.to_string()) {
+                    println!("blacklist: {}", exe_name);
+                }
+                else{
+                    println!("exe_name: {}", exe_name);
+                let output = Command::new("taskkill")
+                    .args(&["/F", "/IM", &exe_name])
+                    .output()
+                    .expect("failed to execute process");
+                if output.status.success() {
+                    println!("Program terminated successfully!");
+                } else {
+                    println!("Failed to terminate program!");
+                }
+                
+            }
+            *code_executed.lock().unwrap().borrow_mut() = true;
+            } else if F11Key.is_pressed() && *code_executed.lock().unwrap().borrow() {
+                // F11 has already been pressed and code has already been executed,
+                // so exit the loop early to avoid printing the message multiple times.
+                break;
+            }
+            //ignore blacklist.json file, when pressed F10
+            if F10Key.is_pressed() && !*code_executed.lock().unwrap().borrow() {
+                let config = match get_blacklist_name() {
+                    Some(value) => value,
+                    None => return,
+                };
+
+                let exe_name = get_foreground_exe_name().unwrap();
+                let output = Command::new("taskkill")
+                    .args(&["/F", "/IM", &exe_name])
+                    .output()
+                    .expect("failed to execute process");
+                if output.status.success() {
+                    println!("Program terminated successfully!");
+                } else {
+                    println!("Failed to terminate program!");
+                }
+                *code_executed.lock().unwrap().borrow_mut() = true;
+            }
+            else if F10Key.is_pressed() && *code_executed.lock().unwrap().borrow() {
+                // F10 has already been pressed and code has already been executed,
+                // so exit the loop early to avoid printing the message multiple times.
+                break;
+            }
+        }
+        *code_executed.lock().unwrap().borrow_mut() = false; // Reset the flag when Scroll Lock is released
+    });
+    
+    inputbot::handle_input_events();
+    
+}
+
+fn get_foreground_exe_name() -> Option<String> {
+    let hwnd = unsafe { GetForegroundWindow() };
+    let mut pid = 0 as DWORD;
+    unsafe { GetWindowThreadProcessId(hwnd, &mut pid) };
+    if pid == 0 { return None; }
+    
+    let handle = unsafe { OpenProcess(0x0400 | 0x0010, 0, pid) };
+    if handle.is_null() { return None; }
+    
+    let mut buffer = [0u16; MAX_PATH];
+    let len = unsafe { GetModuleFileNameExW(handle, 0 as _, buffer.as_mut_ptr(), MAX_PATH as _) };
+    if len == 0 { return None; }
+    
+    let exe_name = OsString::from_wide(&buffer[..len as usize]);
+    let exe_path = Path::new(&exe_name);
+    Some(exe_path.file_name()?.to_string_lossy().into_owned())
 }
