@@ -7,16 +7,58 @@ use std::io::{Error, Read, Write};
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 
+use tauri::{CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayEvent, WindowBuilder};
+use tauri::Manager;
+
 #[derive(Debug, Serialize, Deserialize)]
 struct Blacklist {
     blacklist: Vec<String>,
 }
 
 fn main() {
+    let tray_menu = SystemTrayMenu::new(); // insert the menu items here
+
     tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![remove_exe_from_json, add_exe_to_json, get_blacklist_name])
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");    
+    .invoke_handler(tauri::generate_handler![remove_exe_from_json, add_exe_to_json, get_blacklist_name, close_app])
+    .system_tray(SystemTray::new().with_menu(tray_menu))
+    .on_system_tray_event(|app, event| match event {
+    SystemTrayEvent::LeftClick {
+        position: _,
+        size: _,
+        ..
+    } => {
+        println!("system tray received a left click");
+        //if window is hidden then show it otherwise hide it
+        let window = app.get_window("main").unwrap();
+        if window.is_visible().unwrap() {
+            window.hide().unwrap();
+        } else {
+            window.show().unwrap();
+            
+        }
+    }
+    SystemTrayEvent::MenuItemClick { id, .. } => {
+        match id.as_str() {
+        "quit" => {
+            std::process::exit(0);
+        }
+        "hide" => {
+            let window = app.get_window("main").unwrap();
+            window.hide().unwrap();
+        }
+        _ => {}
+        }
+    }
+    _ => {}
+    })
+    .build(tauri::generate_context!())
+    .expect("error while building tauri application")
+    .run(|_app_handle, event| match event {
+    tauri::RunEvent::ExitRequested { api, .. } => {
+    api.prevent_exit();
+    }
+    _ => {}
+    });
 }
 
 #[tauri::command]
@@ -137,4 +179,10 @@ fn get_blacklist_name() -> Option<Blacklist> {
     };
 
     Some(config)
+}
+
+#[tauri::command]
+fn close_app(app: tauri::AppHandle) {
+    let window = app.get_window("main").unwrap();
+    window.hide().unwrap();
 }
