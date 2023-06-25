@@ -51,14 +51,8 @@ fn main() {
     }
     _ => {}
     })
-    .build(tauri::generate_context!())
-    .expect("error while building tauri application")
-    .run(|_app_handle, event| match event {
-    tauri::RunEvent::ExitRequested { api, .. } => {
-    api.prevent_exit();
-    }
-    _ => {}
-    });
+    .run(tauri::generate_context!())
+    .expect("error while running tauri application"); 
 }
 
 #[tauri::command]
@@ -193,7 +187,6 @@ use std::cell::RefCell;
 use std::sync::Mutex;
 use std::process::Command;
 use inputbot::{KeybdKey::*};
-use std::io::BufReader;
 
 //get exe
 use std::os::windows::ffi::OsStringExt;
@@ -243,7 +236,7 @@ fn start_f4() {
             }
             //ignore blacklist.json file, when pressed F10
             if F10Key.is_pressed() && !*code_executed.lock().unwrap().borrow() {
-                let config = match get_blacklist_name() {
+                let _config = match get_blacklist_name() {
                     Some(value) => value,
                     None => return,
                 };
