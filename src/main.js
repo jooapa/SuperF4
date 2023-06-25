@@ -42,6 +42,7 @@ function objToString(obj) {
 
 window.addEventListener("DOMContentLoaded", () => {
   invoke("start_f4");
+  ckeck_box_start();
   exeName = document.querySelector("#ms-input");
   document.querySelector("#add-form").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -107,3 +108,9 @@ document.querySelector("#refresh").addEventListener("click", (e) => {
   }, 200); // Adjust the duration of the animation in milliseconds
 }
 );
+
+function ckeck_box_start() {
+  if (document.querySelector("#start").checked) {
+    invoke("start_up");
+  }
+}

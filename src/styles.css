@@ -182,3 +182,28 @@ button {
     transform: rotate(360deg);
   }
 }
+
+header {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+}
+header h4{
+  margin: 0;
+  padding: 0;
+  color: white;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  text-align: center;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.switch{
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  top: 11px;
+  right: -20px;
+}

@@ -19,7 +19,7 @@ fn main() {
     let tray_menu = SystemTrayMenu::new(); // insert the menu items here
 
     tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![remove_exe_from_json, add_exe_to_json, get_blacklist_name, close_app, start_f4])
+    .invoke_handler(tauri::generate_handler![remove_exe_from_json, add_exe_to_json, get_blacklist_name, close_app, start_f4, start_up])
     .system_tray(SystemTray::new().with_menu(tray_menu))
     .on_system_tray_event(|app, event| match event {
     SystemTrayEvent::LeftClick {
@@ -180,7 +180,11 @@ fn close_app(app: tauri::AppHandle) {
     let window = app.get_window("main").unwrap();
     window.hide().unwrap();
 }
-
+#[tauri::command]
+fn start_up( app: tauri::AppHandle ) {
+    let window = app.get_window("main").unwrap();
+    window.hide().unwrap();
+}
 //-----------------------------------------------------
 
 use std::cell::RefCell;
