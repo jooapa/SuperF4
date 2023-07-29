@@ -20,6 +20,9 @@ use winapi::um::processthreadsapi::OpenProcess;
 use winapi::um::psapi::GetModuleFileNameExW;
 use winapi::shared::minwindef::{DWORD, MAX_PATH};
 
+use std::ptr;
+use winapi::um::wincon::GetConsoleWindow;
+use winapi::um::winuser::{ShowWindow, SW_HIDE};
 
 
 fn get_foreground_exe_name() -> Option<String> {
@@ -50,14 +53,11 @@ struct SpeedMilliSeconds {
 }
 
 
-fn main(){
-    //hide console
-    use std::ptr;
-    use winapi::um::wincon::GetConsoleWindow;
-    use winapi::um::winuser::{ShowWindow, SW_HIDE};
+fn main() {
     unsafe { winapi::um::wincon::FreeConsole() };
+    //hide console
 
-    let window = unsafe {GetConsoleWindow()};
+    let window = unsafe { GetConsoleWindow() };
     // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showwindow
     if window != ptr::null_mut() {
         unsafe {
@@ -65,13 +65,15 @@ fn main(){
         }
     }
 
-
     let code_executed = Mutex::new(RefCell::new(false));
+    let ishelddown = Mutex::new(false);
 
-    RControlKey .bind(move || {
-        // This code will be executed when Scroll Lock is pressed <held down>
-        while RControlKey .is_pressed() {
-            if F11Key.is_pressed() && !*code_executed.lock().unwrap().borrow() {
+    RControlKey.bind(move || {
+        *ishelddown.lock().unwrap() = true;
+        while RControlKey.is_pressed() {
+            let is_held_down = *ishelddown.lock().unwrap();
+
+            if F11Key.is_pressed() && !*code_executed.lock().unwrap().borrow() && is_held_down {
                 let config = match getblacklistname() {
                     Some(value) => value,
                     None => return,
@@ -81,29 +83,28 @@ fn main(){
                 //taskkill program, if not in blacklist
                 if config.blacklist.contains(&exe_name.to_string()) {
                     println!("blacklist: {}", exe_name);
-                }
-                else{
-                    println!("exe_name: {}", exe_name);
-                let output = Command::new("taskkill")
-                    .args(&["/F", "/IM", &exe_name])
-                    .output()
-                    .expect("failed to execute process");
-                if output.status.success() {
-                    println!("Program terminated successfully!");
                 } else {
-                    println!("Failed to terminate program!");
+                    println!("exe_name: {}", exe_name);
+                    let output = Command::new("taskkill")
+                        .args(&["/F", "/IM", &exe_name])
+                        .output()
+                        .expect("failed to execute process");
+                    if output.status.success() {
+                        println!("Program terminated successfully!");
+                    } else {
+                        println!("Failed to terminate program!");
+                    }
                 }
-                
-            }
-            *code_executed.lock().unwrap().borrow_mut() = true;
+                *code_executed.lock().unwrap().borrow_mut() = true;
             } else if F11Key.is_pressed() && *code_executed.lock().unwrap().borrow() {
                 // F11 has already been pressed and code has already been executed,
                 // so exit the loop early to avoid printing the message multiple times.
                 break;
             }
+
             //ignore blacklist.json file, when pressed F10
-            if F10Key.is_pressed() && !*code_executed.lock().unwrap().borrow() {
-                let config = match getblacklistname() {
+            if F10Key.is_pressed() && !*code_executed.lock().unwrap().borrow() && is_held_down {
+                let _config = match getblacklistname() {
                     Some(value) => value,
                     None => return,
                 };
@@ -119,33 +120,34 @@ fn main(){
                     println!("Failed to terminate program!");
                 }
                 *code_executed.lock().unwrap().borrow_mut() = true;
-            }
-            else if F10Key.is_pressed() && *code_executed.lock().unwrap().borrow() {
+            } else if F10Key.is_pressed() && *code_executed.lock().unwrap().borrow() {
                 // F10 has already been pressed and code has already been executed,
                 // so exit the loop early to avoid printing the message multiple times.
                 break;
             }
 
+            while F8Key.is_toggled() && is_held_down {
+                LeftButton.press();
+                LeftButton.release();
 
-            while F8Key.is_toggled() {
-            LeftButton.press();
-            LeftButton.release();
+                //sleep the time from blacklist.json
+                let speed = match getspeed() {
+                    Some(value) => value,
+                    None => return,
+                };
+                sleep(Duration::from_millis(speed.speed[0] as u64));
+            }
 
-            //sleep the time from blacklist.json
-            let speed = match getspeed() {
-                Some(value) => value,
-                None => return,
-            };
-            sleep(Duration::from_millis(speed.speed[0] as u64));
+            std::thread::sleep(Duration::from_millis(10));
         }
-        }
+
+        *ishelddown.lock().unwrap() = false;
         *code_executed.lock().unwrap().borrow_mut() = false; // Reset the flag when Scroll Lock is released
     });
-    
-    
+
+    // ... (existing code)
 
     inputbot::handle_input_events();
-    
 }
 
 fn getblacklistname() -> Option<Config> {
