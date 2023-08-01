@@ -1,5 +1,8 @@
 {
   "blacklist": [
     "explorer.exe"
+  ],
+  "speed": [
+    14
   ]
 }
