@@ -11,9 +11,9 @@ import ctypes
 import os
 import threading
 
+import mouse
 
 import json
-import pyautogui
 import time
 
 #f = open('data.json') # open file but if it doesn't exist, create it and write {"blacklist": ["explorer.exe"],"speed": [14]}
@@ -55,7 +55,7 @@ def autoclick():
     global speed
 
     while autoclicker_active:
-        pyautogui.click()
+        mouse.click(button='left')
         time.sleep(speed / 1000)
 
 def on_press(key):
