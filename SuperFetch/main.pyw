@@ -19,7 +19,7 @@ import time
 #f = open('data.json') # open file but if it doesn't exist, create it and write {"blacklist": ["explorer.exe"],"speed": [14]}
 if not os.path.exists('options.json'):
     with open('options.json', 'w') as f:
-        json.dump({"blacklist": ["explorer.exe"],"speed": [14]}, f)
+        json.dump({"blacklist": ["explorer.exe"],"speed": [2]}, f)
 
 def get_active_window_exe():
     try:
@@ -114,3 +114,5 @@ if __name__ == "__main__":
     autoclicker_active = False
     with Listener(on_press=on_press, on_release=on_release) as listener:
         listener.join()
+
+#pyinstaller --onefile --noconsole --icon=assets/icon.ico main.pyw
