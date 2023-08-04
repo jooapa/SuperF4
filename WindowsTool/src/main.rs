@@ -145,8 +145,6 @@ fn main() {
         *code_executed.lock().unwrap().borrow_mut() = false; // Reset the flag when Scroll Lock is released
     });
 
-    // ... (existing code)
-
     inputbot::handle_input_events();
 }
 
