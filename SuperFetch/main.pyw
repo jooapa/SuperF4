@@ -9,6 +9,8 @@ import pygetwindow as gw
 import psutil
 import ctypes
 import os
+import threading
+
 
 import json
 import pyautogui
@@ -48,52 +50,67 @@ def close_program(program_name):
     except (subprocess.CalledProcessError, psutil.NoSuchProcess):
         print(f"Failed to close {program_name}. Maybe it's not running.")
         
-def on_press(key):
-    global ctrl_r_pressed  # Declare the variable as global within the function
+def autoclick():
     global autoclicker_active
+    global speed
+
+    while autoclicker_active:
+        pyautogui.click()
+        time.sleep(speed / 1000)
+
+def on_press(key):
+    global ctrl_r_pressed
+    global autoclicker_active
+    global speed
+
     try:
         if key == Key.ctrl_r:
             ctrl_r_pressed = True
             print("Ctrl+R is being held down. Press F11 to close the program.")
+
         elif ctrl_r_pressed and key == Key.f11:
-            #if in blacklist, don't close
             with open('options.json') as f:
                 options = json.load(f)
             blacklist = options["blacklist"]
             if get_active_window_exe() in blacklist:
                 print("Blacklisted program. Not closing.")
                 return
-            #close program
             close_program(get_active_window_exe())
-
             ctrl_r_pressed = False
 
-        #autoclicker activated if f8 is pressed
-        elif key == Key.f8:
+        elif ctrl_r_pressed and key == Key.f10:
             with open('options.json') as f:
                 options = json.load(f)
-            speed = options["speed"]
+            blacklist = options["blacklist"]
+            close_program(get_active_window_exe())
+            ctrl_r_pressed = False
+
+        elif ctrl_r_pressed and key == Key.f8:
+            with open('options.json') as f:
+                options = json.load(f)
+            speed = options["speed"][0]
             print("Autoclicker activated. Press F8 again to deactivate.")
-            while True:
-                print("Clicking...")
-                if not key == Key.f8:
-                    print("Autoclicker deactivated.")
-                    break
-            
+            autoclicker_active = not autoclicker_active
+            if autoclicker_active:
+                autoclick_thread = threading.Thread(target=autoclick)
+                autoclick_thread.start()
 
     except AttributeError:
         pass
 
 def on_release(key):
+    global ctrl_r_pressed
+    global autoclicker_active
+
     if key == Key.ctrl_r:
         ctrl_r_pressed = False
     if key == Key.esc:
         return False
-    
+
 if __name__ == "__main__":
-    #open note
-    subprocess.Popen(["notepad.exe"])
     global ctrl_r_pressed
     ctrl_r_pressed = False
+    global autoclicker_active
+    autoclicker_active = False
     with Listener(on_press=on_press, on_release=on_release) as listener:
         listener.join()
