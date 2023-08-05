@@ -6,4 +6,4 @@ Superfetch allows you to quickly close an unresponsive window on your Windows an
 Windows Tool allows you to quickly close an unresponsive window on your Windows machine, with autoclicker
 
 ## Speed
-Superfetch is the slowest the three, because its made in python rather than with Rust like the other ones
+Superfetch is the slowest of the three, because its made with python rather than with Rust like the other two
