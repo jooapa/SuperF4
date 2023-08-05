@@ -1,9 +1,25 @@
-$shortcutPath = Join-Path $env:USERPROFILE "Start Menu\Programs\Startup\Superfetch.lnk"
-$targetPath = Join-Path $PSScriptRoot "dist\Superfetch.exe"
-$workingDirectory = $PSScriptRoot
+$scriptPath = (Get-Item -Path ".\").FullName
+$targetFile = Join-Path $scriptPath "dist\Superfetch.exe"
+$startInFolder = Join-Path $scriptPath "dist"
+$shortcutPath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\Superfetch.lnk"
+$shortcutKey = "None"
+$windowStyle = 1
+$comment = ""
 
-$WshShell = New-Object -ComObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut($shortcutPath)
-$Shortcut.TargetPath = $targetPath
-$Shortcut.WorkingDirectory = $workingDirectory  # Set the working directory for the shortcut
-$Shortcut.Save()
+# Create a WScript Shell object
+$wshShell = New-Object -ComObject WScript.Shell
+
+# Create the shortcut object
+$shortcut = $wshShell.CreateShortcut($shortcutPath)
+
+# Set the properties of the shortcut
+$shortcut.TargetPath = $targetFile
+$shortcut.WorkingDirectory = $startInFolder
+$shortcut.Hotkey = $shortcutKey
+$shortcut.WindowStyle = $windowStyle
+$shortcut.Description = $comment
+
+# Save the shortcut
+$shortcut.Save()
+
+Write-Host "Shortcut created successfully at: $shortcutPath"
