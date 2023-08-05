@@ -69,7 +69,7 @@ def on_press(key):
             print("Ctrl+R is being held down. Press F11 to close the program.")
 
         elif ctrl_r_pressed and key == Key.f11:
-            with open('preferences') as f:
+            with open('preferences.json') as f:
                 options = json.load(f)
             blacklist = options["blacklist"]
             if get_active_window_exe() in blacklist:
@@ -86,7 +86,7 @@ def on_press(key):
             ctrl_r_pressed = False
 
         elif ctrl_r_pressed and key == Key.f8:
-            with open('preferences') as f:
+            with open('preferences.json') as f:
                 options = json.load(f)
             speed = options["speed"][0]
             print("Autoclicker activated. Press F8 again to deactivate.")
