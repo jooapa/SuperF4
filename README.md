@@ -1,8 +1,8 @@
-# SuperF4
+<span style="color: #b7410e"> # SuperF4 </span>
 SuperF4 allows you to quickly close an unresponsive window on your Windows machine, with cool UI design
-# Superfetch
+<span style="color:blue"> # Superfetch </span>
 Superfetch allows you to quickly close an unresponsive window on your Windows and linux machine, with autoclicker
-# Windows Tool
+<span style="color: #b1410e"> # Windows Tool </span>
 Windows Tool allows you to quickly close an unresponsive window on your Windows machine, with autoclicker
 
 ## Speed
