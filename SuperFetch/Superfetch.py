@@ -104,6 +104,8 @@ def on_release(key):
 
     if key == Key.ctrl_r:
         ctrl_r_pressed = False
+    if key == Key.esc:
+        return False
 
 if __name__ == "__main__":
     global ctrl_r_pressed
