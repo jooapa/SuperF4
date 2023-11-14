@@ -116,4 +116,4 @@ if __name__ == "__main__":
         listener.join()
 
 #make exe
-#pyinstaller --onefile --noconsole --icon=assets/icon.ico .\Superfetch.py
+# nuitka --standalone --windows-disable-console --windows-icon-from-ico=assets/icon.ico .\Superfetch.py

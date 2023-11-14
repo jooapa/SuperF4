@@ -1,6 +1,6 @@
 $scriptPath = (Get-Item -Path ".\").FullName
-$targetFile = Join-Path $scriptPath "dist\Superfetch.exe"
-$startInFolder = Join-Path $scriptPath "dist"
+$targetFile = Join-Path $scriptPath "Superfetch.dist/Superfetch.exe"
+$startInFolder = Join-Path $scriptPath "Superfetch.dist"
 $shortcutPath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\Superfetch.lnk"
 $shortcutKey = "None"
 $windowStyle = 1
